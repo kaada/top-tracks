@@ -74,4 +74,4 @@ if __name__ == '__main__':
     if args.outputfile:
         pg.write_to_file(songs, args.outputfile)
     else:
-        print(songs)
+        print('\n'.join(songs))
