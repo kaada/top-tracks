@@ -2,6 +2,7 @@ import sys
 import argparse
 import os
 
+from tqdm import tqdm
 import pprint
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -17,9 +18,13 @@ class PlaylistGenerator():
         self.sp = spotipy.Spotify(client_credentials_manager=self.client_credentials_manager)
 
     def top_tracks(self, artist_name):
-        artist_data = self.sp.search(q='artist:' + artist_name, type='artist')
-        artist_uri = artist_data['artists']['items'][0]['uri']
-        results = self.sp.artist_top_tracks(artist_uri)
+        try:
+            artist_data = self.sp.search(q='artist:' + artist_name, type='artist')
+            artist_uri = artist_data['artists']['items'][0]['uri']
+            results = self.sp.artist_top_tracks(artist_uri)
+        except:
+            print(f'Could not find songs by artist: {artist_name}')
+            return []
 
         songs = []
 
@@ -33,7 +38,7 @@ class PlaylistGenerator():
     def artists_to_tracks(self, artists):
         songs = []
 
-        for a in artists:
+        for a in tqdm(artists):
             tracks = self.top_tracks(a)
             songs.extend(tracks)
 
